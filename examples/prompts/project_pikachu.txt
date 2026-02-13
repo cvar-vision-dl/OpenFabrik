@@ -1,0 +1,3 @@
+Object Name: "pikachu bag"
+And I want the prompts to refer the object inside forest environments. Sometimes more illuminated, sometimes less.
+All the images taken with analog touch.

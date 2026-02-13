@@ -1,0 +1,151 @@
+Project: Kitchen Tabletop Object Detection and Segmentation
+Target Environment
+Kitchen table/counter surfaces, dining areas, food preparation zones
+Objects to Detect
+Dishware & Utensils:
+
+Plates (dinner plates, side plates, bowls - ceramic, porcelain, melamine)
+Cups and mugs (coffee mugs, tea cups, glasses)
+Cutlery (forks, knives, spoons - stainless steel, plastic)
+Serving utensils (spatulas, ladles, tongs)
+Cooking utensils (wooden spoons, whisks, measuring spoons)
+
+Food Items:
+
+Fresh fruits (apples, bananas, oranges, berries)
+Fresh vegetables (tomatoes, lettuce, peppers, onions)
+Bread and baked goods (loaves, rolls, croissants)
+Packaged foods (cereal boxes, pasta boxes, snack bags)
+Condiment bottles (ketchup, oil, vinegar, salt/pepper shakers)
+
+Containers & Storage:
+
+Plastic food containers (Tupperware-style, various sizes)
+Glass jars and bottles
+Cutting boards (wood, plastic, different sizes)
+Mixing bowls (metal, glass, ceramic)
+Food storage bags and wraps
+
+Appliances & Tools:
+
+Coffee makers and kettles
+Toasters
+Blenders
+Kitchen scales
+Timer devices
+Knife blocks
+
+Cleaning & Accessories:
+
+Dish towels and cloths
+Sponges and brushes
+Paper napkins and paper towel rolls
+Placemats and coasters
+Trivets and pot holders
+
+Miscellaneous:
+
+Recipe books or tablets (for digital recipes)
+Potted herbs (basil, mint, small herb pots)
+Fruit bowls
+Bread baskets
+Wine/water carafes
+
+Scene Characteristics
+Surface Types:
+
+Wooden tables (light oak, dark walnut, painted)
+Laminate countertops (marble-look, granite-look, solid colors)
+Glass tables
+Tile surfaces
+Stainless steel prep surfaces
+
+Scene States:
+
+Meal preparation: ingredients spread out, cutting boards in use, knives mid-chop
+During meals: plates with food, utensils in use, glasses filled
+Post-meal: dirty dishes stacked, crumbs, partial food remains
+Clean/organized: neatly arranged items, fruit bowl centered
+Breakfast setup: coffee mugs, toast, cereal boxes, juice
+Baking scene: flour dusted, mixing bowls, measuring cups
+Mixed states: combination of clean and used items
+
+Lighting Conditions:
+
+Natural window light (morning sun, afternoon, golden hour)
+Overhead kitchen lighting (LED, fluorescent, warm incandescent)
+Under-cabinet lighting
+Mixed natural and artificial
+Shadows from objects and people
+Backlighting from windows
+Evening/dim lighting scenarios
+
+Camera Specifications
+Angles & Perspectives:
+
+Overhead/bird's eye (ceiling-mounted, 90° downward) - primary for robotic manipulation
+45° angle (typical robot arm camera perspective)
+Tabletop level (horizontal view across surface)
+Slightly elevated (20-30° angle, human standing perspective)
+
+Focal Lengths:
+
+Wide angle (16-24mm) for full table coverage
+Standard (35-50mm) for realistic human view
+Close-up (60-85mm) for individual object detail
+
+Depth of Field:
+
+Shallow (f/1.8-2.8) for isolated object focus
+Medium (f/4-5.6) for small groups
+Deep (f/8-11) for entire tabletop in focus
+
+Height Variations:
+
+Low angle (30-40cm above surface)
+Medium (60-80cm above surface)
+High (100-150cm above surface) - typical robot camera mounting
+
+Important Considerations
+Realism Requirements:
+
+Include realistic food stains, crumbs, and spills
+Show condensation on cold glasses
+Display steam from hot beverages/food
+Include shadows cast by overhead lighting
+Show natural wear on cutting boards and utensils
+Include reflections on shiny surfaces (plates, glasses, metal)
+
+Variability:
+
+Organization levels: pristine → organized → lived-in → messy → very cluttered
+Occlusion scenarios: items partially hidden behind others, stacked plates, overlapping utensils
+Item states: empty vs. full containers, clean vs. dirty dishes, whole vs. cut food
+Seasonal variations: summer fruits, winter soups, holiday table settings
+
+Robotic Vision Specific:
+
+Include grasping points visibility (handles, edges, flat surfaces)
+Show objects from multiple angles for 3D understanding
+Include scale references (common objects for size calibration)
+Capture reflective and transparent objects (glasses, shiny cutlery)
+Include challenging scenarios: similar colored objects on similar backgrounds
+Show objects in "pickable" vs "non-pickable" states
+
+Safety & Practical:
+
+Include sharp objects (knives) in various orientations
+Show fragile items (glasses, ceramic) that require careful handling
+Display hot items (steaming mugs, pots) that need special consideration
+Include wet/slippery surfaces and spills
+
+Data Collection Tips:
+
+Vary table sizes and shapes (round, rectangular, square)
+Include different chair positions around table
+Show human hands interacting with objects occasionally
+Capture motion blur for moving objects (being picked up, poured)
+Include partial objects at frame edges
+Vary camera exposure for different lighting conditions
+
+This specification should help generate a comprehensive training dataset for robotic vision systems operating in kitchen environments, with particular focus on object detection, segmentation, and grasp planning.

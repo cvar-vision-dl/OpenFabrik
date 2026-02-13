@@ -1,0 +1,40 @@
+Project: Warehouse Automation Object Detection
+
+Target Environment: Industrial warehouse, distribution center, logistics facility
+
+Objects to Detect:
+- Cardboard boxes (various sizes, taped, labeled)
+- Wooden pallets (standard, euro pallets)
+- Plastic containers and bins
+- Forklifts and pallet jacks
+- Barrels and drums
+- Metal shelving units
+- Safety equipment (helmets, vests, signs)
+- Shipping labels and barcodes
+- Shrink-wrapped items
+
+Scene Characteristics:
+- Industrial lighting (overhead fluorescents, natural light from skylights)
+- Concrete floors with wear marks and forklift tracks
+- Metal racking systems extending to ceiling
+- Narrow aisles between shelves
+- Loading docks with open bay doors
+- Cluttered realistic warehouse environments
+- Various times of day affecting lighting
+
+Camera Specifications:
+- Warehouse security camera perspective (ceiling-mounted, 15-30 degree angle)
+- Mobile robot perspective (ground level, 1-2 feet height)
+- Forklift-mounted camera perspective
+- Handheld device perspective (tablet, scanner)
+- Standard focal lengths: 24mm, 35mm, 50mm
+- Varying depth of field
+- Occasional motion blur from movement
+
+Important Considerations:
+- Images must look like real warehouse photographs
+- Include typical warehouse "messiness" and clutter
+- Show objects partially occluded by others
+- Vary lighting quality (harsh shadows, even lighting, dim areas)
+- Include safety signage and floor markings
+- Show different states (organized shelves vs. disorganized piles)
