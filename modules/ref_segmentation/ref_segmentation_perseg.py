@@ -19,7 +19,7 @@ import yaml
 
 warnings.filterwarnings('ignore')
 
-from show import *
+from modules.ref_segmentation.show import *
 
 # Try to import both SAM and SAM 2
 try:

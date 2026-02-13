@@ -52,7 +52,7 @@ from modules.llm_models.prompt_generator import PromptGenerator
 from modules.cv_processing.computer_vision_augmentation import ComputerVisionAugmentation
 
 # Import the extended PerSAM processor (assuming it's in the same directory or properly installed)
-from ref_segmentation.ref_segmentation_perseg import PerSAMProcessor
+from modules.ref_segmentation.ref_segmentation_perseg import PerSAMProcessor
 
 
 class ModelContextManager:

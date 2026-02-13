@@ -46,9 +46,9 @@ import gc
 import torch
 import psutil
 
-from llm_models.prompt_generator import PromptGenerator
-from diffusion_models.flux_image_generator import FluxImageGenerator
-from open_set_models.grounde_sam2_detector import GroundedSAM2Detector
+from modules.llm_models.prompt_generator import PromptGenerator
+from modules.diffusion_models.flux_image_generator import FluxImageGenerator
+from modules.open_set_models.grounde_sam2_detector import GroundedSAM2Detector
 
 
 def get_session_directory(base_working_dir: str, session_param: str) -> str:
@@ -1020,8 +1020,10 @@ Examples:
                         help="Project info file (required for --run_prompts)")
 
     # New iterative prompt parameters
-    parser.add_argument('--iterative_prompts', action='store_true',
-                        help="Use iterative prompt generation (ask for one prompt at a time)")
+    parser.add_argument('--iterative_prompts', action='store_true', default=True,
+                        help="Use iterative prompt generation (ask for one prompt at a time, enabled by default)")
+    parser.add_argument('--no_iterative_prompts', action='store_false', dest='iterative_prompts',
+                        help="Disable iterative prompt generation and use batch mode instead")
     parser.add_argument('--num_prompts_per_execution', type=int,
                         help="Number of prompts to generate per execution (required with --iterative_prompts)")
 

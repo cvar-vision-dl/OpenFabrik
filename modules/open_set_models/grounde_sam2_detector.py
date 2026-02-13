@@ -10,7 +10,7 @@ from typing import List, Dict, Tuple, Optional, Union
 from torchvision.ops import box_convert
 from sam2.build_sam import build_sam2
 from sam2.sam2_image_predictor import SAM2ImagePredictor
-from grounding_dino.groundingdino.util.inference import load_model, load_image, predict
+from groundingdino.util.inference import load_model, load_image, predict
 
 
 class GroundedSAM2Detector:
