@@ -182,7 +182,7 @@ ollama pull cogito:latest
 conda create -n openfabrik python=3.10 -y
 conda activate openfabrik
 
-# Download all pipeline models into your cache_dir (up to 45Gb)
+# Download all pipeline models into your cache_dir (up to 45GB)
 pip install huggingface_hub
 python utilities/download_models.py --cache_dir ./my_cache_dir --all
 ```
