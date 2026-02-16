@@ -184,6 +184,8 @@ conda activate openfabrik
 
 # Download all pipeline models into your cache_dir (up to 45GB)
 pip install huggingface_hub
+git clone https://github.com/yourusername/OpenFabrik.git
+cd OpenFabrik
 python utilities/download_models.py --cache_dir ./my_cache_dir --all
 ```
 
@@ -192,9 +194,6 @@ python utilities/download_models.py --cache_dir ./my_cache_dir --all
 ```bash
 # Conda env creation [optional]
 conda activate openfabrik
-
-# Clone repository
-git clone https://github.com/yourusername/OpenFabrik.git
 cd OpenFabrik
 
 # Install dependencies
@@ -258,16 +257,14 @@ OpenFabrik provides two specialized pipelines for different use cases:
 
 ```bash
 python pipelines/scene_generation_pipeline.py \
-  --working_dir ./datasets/office_objects \
-  --cache_dir ./my_cache_dir \
+  --working_dir ./my_dataset \
   --session new \
   --run_prompts --run_images --run_annotations \
-  --num_prompts_per_execution 50 \
-  --num_executions 10 \
-  --num_random_imgs 4 \
-  --predefined_classes keyboard mouse monitor headset \
-  --system_prompt_file examples/prompts/system.txt \
-  --project_info_file examples/prompts/office_objects.txt
+  --project_info_file examples/prompts/kitchen_objects.txt \
+  --predefined_classes "cup,bottle,glass,plate,spoon,knife,fork,bowl" \
+  --num_prompts_per_execution 10 \
+  --num_random_imgs 2 \
+  --cache_dir ./my_cache_dir
 ```
 
 **Key Features:**
@@ -305,7 +302,7 @@ In case you already have the mask for the reference image, just proceed to the p
 ```bash
 python pipelines/reference_object_pipeline.py \
   --input_image ./examples/pikachu_bag.jpg \
-  --input_mask ./examples/pikachu_bag_mask.jpg \
+  --input_mask ./examples/pikachu_bag_mask.png \
   --project_info_file ./examples/prompts/project_pikachu.txt \
   --object_name "pikachu bag" \
   --num_prompts 10 \
