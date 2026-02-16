@@ -257,16 +257,14 @@ OpenFabrik provides two specialized pipelines for different use cases:
 
 ```bash
 python pipelines/scene_generation_pipeline.py \
-  --working_dir ./datasets/office_objects \
-  --cache_dir ./my_cache_dir \
+  --working_dir ./my_dataset \
   --session new \
   --run_prompts --run_images --run_annotations \
-  --num_prompts_per_execution 50 \
-  --num_executions 10 \
-  --num_random_imgs 4 \
-  --predefined_classes keyboard mouse monitor headset \
-  --system_prompt_file examples/prompts/system.txt \
-  --project_info_file examples/prompts/office_objects.txt
+  --project_info_file examples/prompts/kitchen_objects.txt \
+  --predefined_classes "cup,bottle,glass,plate,spoon,knife,fork,bowl" \
+  --num_prompts_per_execution 10 \
+  --num_random_imgs 2 \
+  --cache_dir ./my_cache_dir
 ```
 
 **Key Features:**
