@@ -46,6 +46,8 @@ import gc
 import torch
 import psutil
 
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from modules.llm_models.prompt_generator import PromptGenerator
 from modules.diffusion_models.flux_image_generator import FluxImageGenerator
 from modules.open_set_models.grounde_sam2_detector import GroundedSAM2Detector
@@ -692,7 +694,7 @@ def run_annotation(image_paths, classes, working_dir, dataset_name, split,
     print(f"Global classes: {classes}")
 
     # Create detector with global classes
-    from open_set_models.grounde_sam2_detector import GroundedSAM2Detector
+    from modules.open_set_models.grounde_sam2_detector import GroundedSAM2Detector
 
     detector = GroundedSAM2Detector(
         sam2_checkpoint=sam2_ckpt,
@@ -1012,7 +1014,7 @@ Examples:
                         help="Run dataset annotation step")
 
     # Prompt generation parameters
-    parser.add_argument('--model_name', default='qwen3:latest',
+    parser.add_argument('--model_name', default='cogito:latest',
                         help="Ollama model name for prompt generation")
     parser.add_argument('--system_prompt_file', default='examples/prompts/system.txt',
                         help="System prompt file (required for --run_prompts)")

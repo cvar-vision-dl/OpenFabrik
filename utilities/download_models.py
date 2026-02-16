@@ -122,27 +122,33 @@ MODELS = {
     "huggingface": {
         "qwen_image_edit": {
             "repo_id": "ovedrive/qwen-image-edit-4bit",
-            "description": "Qwen Image Edit 4-bit (reference pipeline steps 1, 4, 5)"
+            "description": "Qwen Image Edit 4-bit (reference pipeline steps 1, 4, 5)",
+            "pipeline": "reference"
         },
         "qwen_multicamera": {
             "repo_id": "ovedrive/Qwen-Image-Edit-2511-4bit",
-            "description": "Qwen Image Edit 2511 4-bit base model (reference pipeline step 2)"
+            "description": "Qwen Image Edit 2511 4-bit base model (reference pipeline step 2)",
+            "pipeline": "reference"
         },
         "qwen_multicamera_lora": {
             "repo_id": "fal/Qwen-Image-Edit-2511-Multiple-Angles-LoRA",
-            "description": "Multi-angle LoRA for Qwen Image Edit 2511 (reference pipeline step 2)"
+            "description": "Multi-angle LoRA for Qwen Image Edit 2511 (reference pipeline step 2)",
+            "pipeline": "reference"
         },
         "zero123plus_v1.2": {
             "repo_id": "sudo-ai/zero123plus-v1.2",
-            "description": "Zero123++ v1.2 (reference pipeline step 2, alternative perspective generator)"
+            "description": "Zero123++ v1.2 (reference pipeline step 2, alternative perspective generator)",
+            "pipeline": "reference"
         },
         "flux_schnell": {
             "repo_id": "black-forest-labs/FLUX.1-schnell",
-            "description": "FLUX.1 Schnell (scene generation pipeline - fast)"
+            "description": "FLUX.1 Schnell (scene generation pipeline - fast)",
+            "pipeline": "scene"
         },
         "flux_dev": {
             "repo_id": "black-forest-labs/FLUX.1-dev",
-            "description": "FLUX.1 Dev (scene generation pipeline - higher quality)"
+            "description": "FLUX.1 Dev (scene generation pipeline - higher quality, optional)",
+            "pipeline": "optional"
         }
     }
 }
@@ -546,8 +552,7 @@ def download_grounding_dino_models(cache_dir: Path,
 
 
 def download_huggingface_models(cache_dir: Path,
-                                 models: List[str] = ["qwen_image_edit", "qwen_multicamera",
-                                                      "qwen_multicamera_lora", "zero123plus_v1.2"]) -> Dict[str, str]:
+                                 models: List[str] = None) -> Dict[str, str]:
     """
     Pre-download HuggingFace models using native caching.
 
@@ -563,6 +568,9 @@ def download_huggingface_models(cache_dir: Path,
         print("✗ huggingface_hub required for HuggingFace downloads")
         print("  Install with: pip install huggingface_hub")
         return {}
+
+    if models is None:
+        models = DEFAULT_HF_MODELS
 
     downloaded = {}
 
@@ -586,6 +594,25 @@ def download_huggingface_models(cache_dir: Path,
             downloaded[model_name] = model_info["repo_id"]
 
     return downloaded
+
+
+# ============================================================================
+# DEFAULT MODEL SELECTIONS
+# ============================================================================
+
+# Models required by both pipelines (--all downloads these)
+# Reference pipeline: qwen_image_edit, qwen_multicamera, qwen_multicamera_lora, zero123plus
+# Scene pipeline:     flux_schnell
+DEFAULT_HF_MODELS = [
+    "qwen_image_edit",
+    "qwen_multicamera",
+    "qwen_multicamera_lora",
+    "zero123plus_v1.2",
+    "flux_schnell",
+]
+
+# All models including optional ones (--include_optional adds these)
+ALL_HF_MODELS = list(MODELS["huggingface"].keys())
 
 
 # ============================================================================
@@ -680,10 +707,20 @@ def list_available_models():
         for name, info in models.items():
             desc = info.get("description", "No description")
             size = info.get("size_mb", "varies")
+            pipeline = info.get("pipeline", "")
+            default_marker = ""
+
+            # Mark which models are in the default --all set
+            if category == "huggingface":
+                if name in DEFAULT_HF_MODELS:
+                    default_marker = " [default]"
+                else:
+                    default_marker = " [optional]"
+
             if isinstance(size, int):
-                print(f"  • {name}: {desc} ({size} MB)")
+                print(f"  • {name}: {desc} ({size} MB){default_marker}")
             else:
-                print(f"  • {name}: {desc}")
+                print(f"  • {name}: {desc}{default_marker}")
 
 
 def print_usage_instructions(cache_dir: Path, results: Dict):
@@ -702,32 +739,21 @@ def print_usage_instructions(cache_dir: Path, results: Dict):
     print(f"   # Or source the generated script:")
     print(f"   source {cache_dir.absolute()}/set_cache_env.sh")
 
-    # dataset_pipeline.py usage
-    print("\n2. For dataset_pipeline.py:")
-    print("   python dataset_pipeline.py \\")
+    # Scene generation pipeline usage
+    print("\n2. For scene_generation_pipeline.py:")
+    print("   python pipelines/scene_generation_pipeline.py \\")
     print(f"       --cache_dir {cache_dir.absolute()} \\")
-    if results.get("sam"):
-        sam_ckpt = list(results["sam"].values())[0]
-        print(f"       --sam_ckpt {sam_ckpt} \\")
-    if results.get("sam2"):
-        sam2_info = list(results["sam2"].values())[0]
-        print(f"       --sam2_ckpt {sam2_info['checkpoint']} \\")
-        print(f"       --sam2_config {sam2_info['config']} \\")
-    print("       --input_image <image> --input_mask <mask> --object_name <name>")
+    print("       --working_dir ./generated_scenes --session new \\")
+    print("       --run_prompts --run_images --run_annotations \\")
+    print("       --project_info_file examples/prompts/kitchen_objects.txt \\")
+    print("       --predefined_classes \"cup,bottle,glass\" \\")
+    print("       --num_prompts_per_execution 10 --num_random_imgs 2")
 
-    # Enhanced pipeline usage
-    print("\n3. For enhanced pipeline (pipeline.py):")
-    print("   python pipeline.py \\")
+    # Reference pipeline usage
+    print("\n3. For dataset_pipeline.py:")
+    print("   python pipelines/dataset_pipeline.py \\")
     print(f"       --cache_dir {cache_dir.absolute()} \\")
-    if results.get("sam2"):
-        sam2_info = list(results["sam2"].values())[0]
-        print(f"       --sam2_ckpt {sam2_info['checkpoint']} \\")
-        print(f"       --sam2_config {sam2_info['config']} \\")
-    if results.get("grounding_dino"):
-        gdino_info = list(results["grounding_dino"].values())[0]
-        print(f"       --gdino_ckpt {gdino_info['checkpoint']} \\")
-        print(f"       --gdino_config {gdino_info['config']} \\")
-    print("       --working_dir ./datasets --session new ...")
+    print("       --input_image <image> --input_mask <mask> --object_name <name>")
 
     print("\n" + "=" * 60)
 
@@ -766,7 +792,16 @@ def show_cache_status(cache_dir: Path):
                 print("\nHuggingFace cache:")
                 for repo in cache_info.repos:
                     size_mb = repo.size_on_disk / (1024 * 1024)
-                    print(f"  ✓ {repo.repo_id} ({size_mb:.1f} MB)")
+                    # Mark if it's a default or optional model
+                    marker = ""
+                    for name, info in MODELS["huggingface"].items():
+                        if info["repo_id"] == repo.repo_id:
+                            if name in DEFAULT_HF_MODELS:
+                                marker = " [default]"
+                            else:
+                                marker = " [optional]"
+                            break
+                    print(f"  ✓ {repo.repo_id} ({size_mb:.1f} MB){marker}")
             else:
                 print("\nHuggingFace cache: empty")
         except Exception as e:
@@ -788,13 +823,13 @@ def main():
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
-    # Download all required models
+    # Download all required models for both pipelines
     python download_models.py --cache_dir ./models --all
 
     # Download specific model types
     python download_models.py --cache_dir ./models --sam --sam2
 
-    # Download with optional model variants
+    # Download with optional model variants (e.g. FLUX Dev)
     python download_models.py --cache_dir ./models --all --include_optional
 
     # List available models
@@ -802,6 +837,14 @@ Examples:
 
     # Check what's cached
     python download_models.py --cache_dir ./models --status
+
+Default --all downloads:
+    Direct:       SAM ViT-H, SAM2.1 Hiera Large, Grounding DINO Swin-T
+    HuggingFace:  Qwen Image Edit, Qwen Multi-Camera + LoRA,
+                  Zero123++ v1.2, FLUX.1 Schnell
+
+Optional (--include_optional):
+    Additional SAM/SAM2 variants, Grounding DINO Swin-B, FLUX.1 Dev
 
 Notes:
     - HuggingFace models use native caching (won't re-download if cached)
@@ -819,7 +862,7 @@ Notes:
 
     # Model selection
     parser.add_argument('--all', action='store_true',
-                        help='Download all required models')
+                        help='Download all required models for both pipelines')
     parser.add_argument('--sam', action='store_true',
                         help='Download SAM models')
     parser.add_argument('--sam2', action='store_true',
@@ -827,11 +870,11 @@ Notes:
     parser.add_argument('--grounding_dino', action='store_true',
                         help='Download Grounding DINO models')
     parser.add_argument('--huggingface', action='store_true',
-                        help='Pre-download HuggingFace models (FLUX, Zero123++, etc.)')
+                        help='Pre-download HuggingFace models (FLUX, Qwen, Zero123++, etc.)')
 
     # Options
     parser.add_argument('--include_optional', action='store_true',
-                        help='Include optional model variants')
+                        help='Include optional model variants (e.g. FLUX Dev, extra SAM sizes)')
     parser.add_argument('--sam_variant', type=str, nargs='+',
                         default=['sam_vit_h'],
                         help='SAM variants to download (default: sam_vit_h)')
@@ -908,9 +951,10 @@ Notes:
         results["grounding_dino"] = download_grounding_dino_models(cache_dir, variants)
 
     if download_hf:
-        models = ["qwen_image_edit", "qwen_multicamera", "qwen_multicamera_lora", "zero123plus_v1.2"]
         if args.include_optional:
-            models = list(MODELS["huggingface"].keys())
+            models = ALL_HF_MODELS
+        else:
+            models = DEFAULT_HF_MODELS
         results["huggingface"] = download_huggingface_models(cache_dir, models)
 
     # Create config and env files
@@ -938,31 +982,3 @@ Notes:
 
 if __name__ == "__main__":
     main()
-
-# ```
-#
-# ## Key fixes:
-#
-# | Before (problematic) | After (correct) |
-# |---------------------|-----------------|
-# | Used both `cache_dir` AND `local_dir` | Only use `cache_dir` |
-# | Created duplicate copies | Uses native HF cache structure |
-# | Pipelines might not find models | Pipelines will find cached models |
-
-## How the caching now works:
-# ```
-# ./models/                              # Your cache_dir
-# ├── checkpoints/                       # Direct downloads (SAM, Grounding DINO)
-# │   ├── sam/
-# │   │   └── sam_vit_h_4b8939.pth
-# │   └── grounding_dino/
-# │       ├── groundingdino_swint_ogc.pth
-# │       └── configs/
-# ├── models--facebook--sam2.1-hiera-large/   # HF native cache structure
-# │   ├── blobs/
-# │   ├── refs/
-# │   └── snapshots/
-# ├── models--sudo-ai--zero123plus-v1.2/
-# │   └── ...
-# ├── model_paths.json                   # Generated config
-# └── set_cache_env.sh                   # Environment setup script
