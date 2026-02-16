@@ -26,6 +26,10 @@ Training computer vision models requires **thousands of labeled images**. Data g
 
 Just describe what you want to detect, and OpenFabrik generates fully annotated datasets ready for training YOLOv8, YOLOv10, or any modern detection/segmentation model.
 
+
+https://github.com/user-attachments/assets/66e1eea5-9428-415f-ae29-b195a38f72e5
+
+
 ---
 
 ## 📋 Use Cases
