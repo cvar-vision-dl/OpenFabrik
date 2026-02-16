@@ -259,6 +259,10 @@ OpenFabrik provides two specialized pipelines for different use cases:
 
 **Output:** YOLO segmentation dataset with bounding boxes and masks
 
+
+https://github.com/user-attachments/assets/3ec126b9-f90e-490b-8087-f24dddf15bf2
+
+
 ```bash
 python pipelines/scene_generation_pipeline.py \
   --working_dir ./my_dataset \
@@ -290,6 +294,9 @@ python pipelines/scene_generation_pipeline.py \
 4. 🏷️ **Auto-annotation** - PerSAM + SAM2 for reference-based segmentation
 
 **Output:** YOLO segmentation dataset with multi-perspective annotations
+
+https://github.com/user-attachments/assets/0b40a002-055f-4909-999a-2d0fbe5fd97f
+
 
 For this pipeline, you need a **reference image** and a **reference mask for that image**. If you don't have a reference mask, you can generate it with this utility:
 
