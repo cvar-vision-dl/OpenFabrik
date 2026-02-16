@@ -302,7 +302,7 @@ In case you already have the mask for the reference image, just proceed to the p
 ```bash
 python pipelines/reference_object_pipeline.py \
   --input_image ./examples/pikachu_bag.jpg \
-  --input_mask ./examples/pikachu_bag_mask.jpg \
+  --input_mask ./examples/pikachu_bag_mask.png \
   --project_info_file ./examples/prompts/project_pikachu.txt \
   --object_name "pikachu bag" \
   --num_prompts 10 \
