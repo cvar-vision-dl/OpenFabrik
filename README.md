@@ -540,6 +540,20 @@ OpenFabrik combines state-of-the-art models into automated pipelines:
 
 ---
 
+## 📝 Citation
+
+If you use OpenFabrik in your research, please cite:
+```bibtex
+@misc{openfabrik2025,
+    author = {Rodriguez-Ramos, Alejandro and Campoy, Pascual},
+    title = {OpenFabrik: Bootstrap Your Computer Vision Models Without Data or Annotations},
+    howpublished = "\url{https://github.com/cvar-vision-dl/OpenFabrik}",
+    year = {2025}
+}
+```
+
+---
+
 <a id="community"></a>
 
 ## 🤝 Community
