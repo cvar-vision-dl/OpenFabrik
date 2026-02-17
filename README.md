@@ -548,6 +548,7 @@ If you use OpenFabrik in your research, please cite:
     author = {Rodriguez-Ramos, Alejandro and Campoy, Pascual},
     title = {OpenFabrik: Bootstrap Your Computer Vision Models Without Data or Annotations},
     howpublished = "\url{https://github.com/cvar-vision-dl/OpenFabrik}",
+    doi = {10.5281/zenodo.18669083},
     year = {2025}
 }
 ```
