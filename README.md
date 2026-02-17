@@ -188,7 +188,7 @@ conda activate openfabrik
 
 # Download all pipeline models into your cache_dir (up to 45GB)
 pip install huggingface_hub
-git clone https://github.com/yourusername/OpenFabrik.git
+git clone https://github.com/cvar-vision-dl/OpenFabrik
 cd OpenFabrik
 python utilities/download_models.py --cache_dir ./my_cache_dir --all
 ```
