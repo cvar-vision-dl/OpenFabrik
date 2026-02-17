@@ -597,7 +597,7 @@ If OpenFabrik helps your project, consider giving it a star! ⭐
 
 <div align="center">
 
-**Built with ❤️ by the open-source community**
+**Built with ❤️ by Computer Vision and Aerial Robotics (CVAR) for the open-source community**
 
 [Report Bug](https://github.com/yourusername/OpenFabrik/issues) • [Request Feature](https://github.com/yourusername/OpenFabrik/issues) • [Discussions](https://github.com/yourusername/OpenFabrik/discussions)
 
