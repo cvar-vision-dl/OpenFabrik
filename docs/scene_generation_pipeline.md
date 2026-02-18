@@ -55,7 +55,7 @@ Output: `./my_dataset/YYYYMMDD/outputs/` — a ready-to-train YOLO segmentation 
 | `--model_name` | `cogito:latest` | Ollama model for prompt generation |
 | `--system_prompt_file` | `examples/prompts/system.txt` | System prompt defining LLM behavior |
 | `--project_info_file` | *(required for prompts)* | Project-specific context (objects, scenes, lighting) |
-| `--iterative_prompts` | off | Generate prompts one at a time with conversation context (recommended for diversity) |
+| `--iterative_prompts` | on | Generate prompts one at a time with conversation context (recommended for diversity) |
 | `--num_prompts_per_execution` | — | Prompts per execution (required with `--iterative_prompts`) |
 | `--num_executions` | `1` | Number of independent prompt conversations |
 | `--predefined_classes` | — | Comma-separated class list (skips auto-generated classes) |
