@@ -598,6 +598,8 @@ If OpenFabrik helps your project, consider giving it a star! ⭐
 
 <div align="center">
 
+Author: Alejandro Rodríguez-Ramos [alejandrorodriguezramos.me]
+
 **Built with ❤️ by Computer Vision and Aerial Robotics (CVAR) for the open-source community**
 
 [Report Bug](https://github.com/yourusername/OpenFabrik/issues) • [Request Feature](https://github.com/yourusername/OpenFabrik/issues) • [Discussions](https://github.com/yourusername/OpenFabrik/discussions)
