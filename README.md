@@ -580,6 +580,7 @@ OpenFabrik builds on these excellent projects:
 Special thanks to:
 - The open-source computer vision community
 - All contributors and users providing feedback
+- Thanks to @GPatiA2 for recommending Qwen Multicamera, which upgraded the quality of one of the pipielines
 
 ---
 
