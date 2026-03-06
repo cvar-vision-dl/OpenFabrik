@@ -93,7 +93,14 @@ peft>=0.18.1
 # ============================================================================
 # These must be cloned and installed in editable mode or added to PYTHONPATH:
 #
-# Grounded-SAM-2 (scene generation pipeline):
+# SAM3 (scene generation pipeline - default annotator):
+#   git clone https://github.com/facebookresearch/sam3
+#   cd sam3 && pip install -e . && cd ..
+#   Checkpoint (~3.4 GB, gated): accept license at https://huggingface.co/facebook/sam3
+#     then: hf auth login
+#     then: python utilities/download_models.py --cache_dir ./my_cache_dir --sam3
+#
+# Grounded-SAM-2 (scene generation pipeline - grounded_sam2 annotator):
 #   git clone https://github.com/IDEA-Research/Grounded-SAM-2
 #   export PYTHONPATH=$PYTHONPATH:<path>/Grounded-SAM-2:<path>/Grounded-SAM-2/sam2
 #

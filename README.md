@@ -16,6 +16,14 @@
 
 ---
 
+## 📋 Updates
+
+| Date | Change |
+|---|---|
+| 2026-03-06 | Integrated [SAM3](https://github.com/facebookresearch/sam3) as the default annotator for the Scene Generation Pipeline — native multi-class support via Promptable Concept Segmentation (PCS), sequential per-class strategy for 24 GB VRAM compatibility. Use `--annotator grounded_sam2` to fall back to the original Grounding DINO + SAM2 pipeline. |
+
+---
+
 ## 🎯 The Problem
 
 Training computer vision models requires **thousands of labeled images**. Data gathering and manual annotation is expensive, time-consuming, and becomes a bottleneck for rapid prototyping and experimentation.
@@ -202,6 +210,11 @@ cd OpenFabrik
 
 # Install dependencies
 pip install -r requirements.txt
+
+# Install SAM3
+cd .. # Do not clone it inside OpenFabrik folder!
+git clone https://github.com/facebookresearch/sam3
+cd sam3 && pip install -e . && cd ..
 
 # Clone Grounded Sam 2 repository
 git clone https://github.com/alejodosr/Grounded-SAM-2

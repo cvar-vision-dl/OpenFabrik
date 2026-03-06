@@ -149,6 +149,12 @@ MODELS = {
             "repo_id": "black-forest-labs/FLUX.1-dev",
             "description": "FLUX.1 Dev (scene generation pipeline - higher quality, optional)",
             "pipeline": "optional"
+        },
+        "sam3": {
+            "repo_id": "facebook/sam3",
+            "filename": "sam3.pt",
+            "description": "SAM3 checkpoint (scene generation pipeline - SAM3 annotator, default)",
+            "pipeline": "scene"
         }
     }
 }
@@ -551,6 +557,39 @@ def download_grounding_dino_models(cache_dir: Path,
     return downloaded
 
 
+def download_sam3_model(cache_dir: Path) -> Optional[str]:
+    """
+    Download the SAM3 checkpoint from HuggingFace using native caching.
+
+    SAM3 is a gated model — before running this function you must:
+      1. Accept the license at https://huggingface.co/facebook/sam3
+      2. Authenticate: hf auth login   (or set HF_TOKEN env var)
+    """
+    print("\n" + "=" * 60)
+    print("Downloading SAM3 Model (HuggingFace — gated)")
+    print("=" * 60)
+    print("\n⚠  SAM3 requires prior license acceptance on HuggingFace.")
+    print("   If you have not done so yet:")
+    print("   1. Visit  https://huggingface.co/facebook/sam3  and request access")
+    print("   2. Run    hf auth login   (or export HF_TOKEN=<your_token>)")
+    print()
+
+    if not HF_HUB_AVAILABLE:
+        print("✗ huggingface_hub required for SAM3 download")
+        print("  Install with: pip install huggingface_hub")
+        return None
+
+    model_info = MODELS["huggingface"]["sam3"]
+    print(f"{model_info['description']}")
+
+    path = download_from_huggingface(
+        repo_id=model_info["repo_id"],
+        cache_dir=cache_dir,
+        filename=model_info["filename"]
+    )
+    return path
+
+
 def download_huggingface_models(cache_dir: Path,
                                  models: List[str] = None) -> Dict[str, str]:
     """
@@ -609,6 +648,7 @@ DEFAULT_HF_MODELS = [
     "qwen_multicamera_lora",
     "zero123plus_v1.2",
     "flux_schnell",
+    "sam3",
 ]
 
 # All models including optional ones (--include_optional adds these)
@@ -870,7 +910,9 @@ Notes:
     parser.add_argument('--grounding_dino', action='store_true',
                         help='Download Grounding DINO models')
     parser.add_argument('--huggingface', action='store_true',
-                        help='Pre-download HuggingFace models (FLUX, Qwen, Zero123++, etc.)')
+                        help='Pre-download HuggingFace models (FLUX, Qwen, Zero123++, SAM3, etc.)')
+    parser.add_argument('--sam3', action='store_true',
+                        help='Download SAM3 checkpoint (scene generation pipeline - default annotator)')
 
     # Options
     parser.add_argument('--include_optional', action='store_true',
@@ -924,8 +966,9 @@ Notes:
     download_sam2 = args.all or args.sam2
     download_gdino = args.all or args.grounding_dino
     download_hf = args.all or args.huggingface
+    download_sam3 = args.all or args.sam3
 
-    if not any([download_sam, download_sam2, download_gdino, download_hf]):
+    if not any([download_sam, download_sam2, download_gdino, download_hf, download_sam3]):
         print("\nNo models selected. Use --all or specify individual models.")
         print("Use --list to see available models.")
         print("Use --status to check what's cached.")
@@ -949,6 +992,11 @@ Notes:
         if args.include_optional:
             variants = list(MODELS["grounding_dino"].keys())
         results["grounding_dino"] = download_grounding_dino_models(cache_dir, variants)
+
+    if download_sam3:
+        path = download_sam3_model(cache_dir)
+        if path:
+            results["huggingface"]["sam3"] = MODELS["huggingface"]["sam3"]["repo_id"]
 
     if download_hf:
         if args.include_optional:
