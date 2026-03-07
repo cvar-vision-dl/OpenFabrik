@@ -328,13 +328,13 @@ class SAM3Detector:
                 if polygon is not None:
                     polygon_str = ' '.join([f"{c:.6f}" for c in polygon])
                     f.write(f"{class_id} {polygon_str}\n")
-                else:
-                    x1, y1, x2, y2 = box
-                    xc = ((x1 + x2) / 2) / w
-                    yc = ((y1 + y2) / 2) / h
-                    bw = (x2 - x1) / w
-                    bh = (y2 - y1) / h
-                    f.write(f"{class_id} {xc:.6f} {yc:.6f} {bw:.6f} {bh:.6f}\n")
+                # else:
+                #     x1, y1, x2, y2 = box
+                #     xc = ((x1 + x2) / 2) / w
+                #     yc = ((y1 + y2) / 2) / h
+                #     bw = (x2 - x1) / w
+                #     bh = (y2 - y1) / h
+                #     f.write(f"{class_id} {xc:.6f} {yc:.6f} {bw:.6f} {bh:.6f}\n")
 
         classes_path = dataset_dir / "classes.txt"
         if not self.classes_file_saved:
@@ -358,10 +358,7 @@ class SAM3Detector:
             'yaml_path': str(yaml_path),
         }
 
-    def _mask_to_polygon(self,
-                         mask: np.ndarray,
-                         img_w: int,
-                         img_h: int) -> Optional[List[float]]:
+    def _mask_to_polygon(self, mask, img_w, img_h):
         try:
             contours, _ = cv2.findContours(
                 mask.astype(np.uint8),
@@ -371,7 +368,7 @@ class SAM3Detector:
             if not contours:
                 return None
             largest = max(contours, key=cv2.contourArea)
-            epsilon = 0.02 * cv2.arcLength(largest, True)
+            epsilon = 0.001 * cv2.arcLength(largest, True)  # much smoother
             simplified = cv2.approxPolyDP(largest, epsilon, True)
             polygon = []
             for point in simplified:
