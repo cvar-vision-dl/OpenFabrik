@@ -212,12 +212,12 @@ cd OpenFabrik
 pip install -r requirements.txt
 
 # Install SAM3
-cd .. # Do not clone it inside OpenFabrik folder!
+cd .. # Do not clone it inside OpenFabrik folder
 git clone https://github.com/facebookresearch/sam3
 cd sam3 && pip install -e . && cd ..
 
 # Clone Grounded Sam 2 repository
-git clone https://github.com/alejodosr/Grounded-SAM-2
+git clone https://github.com/alejodosr/Grounded-SAM-2  # This one HAS to be inside OpenFabrik folder
 cd Grounded-SAM-2
 pip install -e .
 pip install --no-build-isolation -e grounding_dino
