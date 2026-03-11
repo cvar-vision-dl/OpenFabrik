@@ -16,14 +16,6 @@
 
 ---
 
-## 📋 Updates
-
-| Date | Change |
-|---|---|
-| 2026-03-06 | Integrated [SAM3](https://github.com/facebookresearch/sam3) as the default annotator for the Scene Generation Pipeline — native multi-class support via Promptable Concept Segmentation (PCS), sequential per-class strategy for 24 GB VRAM compatibility. Use `--annotator grounded_sam2` to fall back to the original Grounding DINO + SAM2 pipeline. |
-
----
-
 ## 🎯 The Problem
 
 Training computer vision models requires **thousands of labeled images**. Data gathering and manual annotation is expensive, time-consuming, and becomes a bottleneck for rapid prototyping and experimentation.
@@ -36,6 +28,14 @@ Just describe what you want to detect, and OpenFabrik generates fully annotated 
 
 
 https://github.com/user-attachments/assets/66e1eea5-9428-415f-ae29-b195a38f72e5
+
+---
+
+## 📋 Updates
+
+| Date | Change |
+|---|---|
+| 2026-03-06 | Integrated [SAM3](https://github.com/facebookresearch/sam3) as the default annotator for the Scene Generation Pipeline — native multi-class support via Promptable Concept Segmentation (PCS), sequential per-class strategy for 24 GB VRAM compatibility. Use `--annotator grounded_sam2` to fall back to the original Grounding DINO + SAM2 pipeline. |
 
 
 ---
