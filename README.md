@@ -29,6 +29,14 @@ Just describe what you want to detect, and OpenFabrik generates fully annotated 
 
 https://github.com/user-attachments/assets/66e1eea5-9428-415f-ae29-b195a38f72e5
 
+---
+
+## 📋 Updates
+
+| Date | Change |
+|---|---|
+| 2026-03-06 | Integrated [SAM3](https://github.com/facebookresearch/sam3) as the default annotator for the Scene Generation Pipeline — native multi-class support via Promptable Concept Segmentation (PCS), sequential per-class strategy for 24 GB VRAM compatibility. Use `--annotator grounded_sam2` to fall back to the original Grounding DINO + SAM2 pipeline. |
+
 
 ---
 
@@ -203,14 +211,21 @@ cd OpenFabrik
 # Install dependencies
 pip install -r requirements.txt
 
+# Install SAM3
+cd .. # Do not clone it inside OpenFabrik folder
+git clone https://github.com/facebookresearch/sam3
+cd sam3 && pip install -e . && cd ..
+
 # Clone Grounded Sam 2 repository
-git clone https://github.com/alejodosr/Grounded-SAM-2
+cd OpenFabrik # This one HAS to be inside OpenFabrik's folder
+git clone https://github.com/alejodosr/Grounded-SAM-2  
 cd Grounded-SAM-2
 pip install -e .
 pip install --no-build-isolation -e grounding_dino
 cd ..
 
-# Clone PerSam repository
+# Clone PerSam repository<
+cd OpenFabrik
 git clone https://github.com/alejodosr/Personalize-SAM
 cd Personalize-SAM
 pip install -e .

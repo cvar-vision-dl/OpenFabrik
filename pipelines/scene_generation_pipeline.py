@@ -679,11 +679,16 @@ def load_classes_for_annotation(working_dir: str) -> List[str]:
 
 def run_annotation(image_paths, classes, working_dir, dataset_name, split,
                          sam2_ckpt, sam2_config, gdino_config, gdino_ckpt,
-                         box_threshold=0.20, text_threshold=0.20):
+                         box_threshold=0.20, text_threshold=0.20,
+                         annotator='grounded_sam2', sam3_ckpt=None,
+                         sam3_confidence=0.45):
     """
-    FIXED: Step 3: Annotate images using Grounding DINO + SAM2 with proper class management.
+    Step 3: Annotate images with the selected annotator.
+
+    annotator='grounded_sam2' (default): Grounding DINO + SAM2 pipeline.
+    annotator='sam3': SAM3 Promptable Concept Segmentation (sequential per-class).
     """
-    print("\n=== STEP 3: Annotating Images (FIXED VERSION) ===")
+    print(f"\n=== STEP 3: Annotating Images [{annotator}] ===")
 
     # If classes not provided directly, load from working directory
     if not classes:
@@ -693,18 +698,24 @@ def run_annotation(image_paths, classes, working_dir, dataset_name, split,
     print(f"Using {len(classes)} global classes for consistent annotation:")
     print(f"Global classes: {classes}")
 
-    # Create detector with global classes
-    from modules.open_set_models.grounde_sam2_detector import GroundedSAM2Detector
-
-    detector = GroundedSAM2Detector(
-        sam2_checkpoint=sam2_ckpt,
-        sam2_model_config=sam2_config,
-        grounding_dino_config=gdino_config,
-        grounding_dino_checkpoint=gdino_ckpt,
-        global_classes=classes  # FIXED: Use global classes from prompt generation
-    )
-
-    detector.load_models()
+    # Instantiate the selected detector
+    if annotator == 'sam3':
+        from modules.open_set_models.sam3_detector import SAM3Detector
+        detector = SAM3Detector(
+            sam3_checkpoint=sam3_ckpt,
+            global_classes=classes,
+        )
+        detector.load_model()
+    else:
+        from modules.open_set_models.grounde_sam2_detector import GroundedSAM2Detector
+        detector = GroundedSAM2Detector(
+            sam2_checkpoint=sam2_ckpt,
+            sam2_model_config=sam2_config,
+            grounding_dino_config=gdino_config,
+            grounding_dino_checkpoint=gdino_ckpt,
+            global_classes=classes,
+        )
+        detector.load_models()
 
     # Verify class mapping
     print(f"\nClass ID mapping:")
@@ -727,13 +738,14 @@ def run_annotation(image_paths, classes, working_dir, dataset_name, split,
     for i, img_path in enumerate(image_paths):
         print(f"\nProcessing image {i + 1}/{len(image_paths)}: {os.path.basename(img_path)}")
 
+        effective_threshold = sam3_confidence if annotator == 'sam3' else box_threshold
         result = detector.process_and_save_all(
             image_path=img_path,
             text_prompt=text_prompt,
             output_dir=outputs_dir,
             dataset_name=dataset_name,
             split=split,
-            box_threshold=box_threshold,
+            box_threshold=effective_threshold,
             text_threshold=text_threshold
         )
 
@@ -755,6 +767,7 @@ def run_annotation(image_paths, classes, working_dir, dataset_name, split,
     # Save annotation summary with class information
     annotation_summary = {
         "annotation_time": datetime.now().isoformat(),
+        "annotator": annotator,
         "total_images": len(image_paths),
         "successful_annotations": successful_annotations,
         "failed_annotations": failed_annotations,
@@ -819,6 +832,7 @@ def resolve_model_paths(args) -> None:
     Uses the same directory structure created by utilities/download_models.py:
     - SAM2: HuggingFace native cache (resolved via hf_hub_download)
     - Grounding DINO: cache_dir/checkpoints/grounding_dino/
+    - SAM3: HuggingFace native cache (resolved via hf_hub_download)
 
     Args:
         args: Parsed argparse namespace. Modified in-place.
@@ -826,6 +840,35 @@ def resolve_model_paths(args) -> None:
     Raises:
         SystemExit: If a required model path cannot be resolved.
     """
+    # SAM3 annotator: resolve only the SAM3 checkpoint; skip SAM2/gdino entirely.
+    if getattr(args, 'annotator', 'sam3') == 'sam3':
+        if args.sam3_ckpt is None:
+            try:
+                from huggingface_hub import hf_hub_download
+                try:
+                    args.sam3_ckpt = hf_hub_download(
+                        repo_id="facebook/sam3",
+                        filename="sam3.pt",
+                        cache_dir=args.cache_dir,
+                        local_files_only=True
+                    )
+                except Exception:
+                    print("SAM3 checkpoint not in local cache, downloading...")
+                    args.sam3_ckpt = hf_hub_download(
+                        repo_id="facebook/sam3",
+                        filename="sam3.pt",
+                        cache_dir=args.cache_dir
+                    )
+                print(f"\nResolved model paths from cache_dir:")
+                print(f"  sam3_ckpt: {args.sam3_ckpt}\n")
+            except Exception as e:
+                print("ERROR: Could not resolve SAM3 checkpoint from cache_dir: {}".format(e))
+                print("  Run: python utilities/download_models.py --cache_dir {} --sam3".format(
+                    args.cache_dir))
+                sys.exit(1)
+        return  # SAM2 / Grounding DINO paths are not needed for SAM3
+
+    # --- Grounded-SAM2 annotator (original resolution logic, unchanged below) ---
     cache_dir = args.cache_dir
     resolved = []
 
@@ -923,11 +966,18 @@ def validate_step_requirements(args, steps_to_run: List[str]) -> bool:
             return False
 
     if "annotations" in steps_to_run:
-        required_files = [args.sam2_ckpt, args.sam2_config, args.gdino_config, args.gdino_ckpt]
-        if not all(required_files):
-            print(
-                "ERROR: All model files (--sam2_ckpt, --sam2_config, --gdino_config, --gdino_ckpt) are required for annotation")
-            return False
+        if getattr(args, 'annotator', 'sam3') == 'sam3':
+            if not args.sam3_ckpt:
+                print("ERROR: --sam3_ckpt is required for annotation with SAM3 "
+                      "(or set --cache_dir so it can be resolved automatically)")
+                return False
+        else:
+            required_files = [args.sam2_ckpt, args.sam2_config, args.gdino_config, args.gdino_ckpt]
+            if not all(required_files):
+                print(
+                    "ERROR: All model files (--sam2_ckpt, --sam2_config, "
+                    "--gdino_config, --gdino_ckpt) are required for annotation")
+                return False
 
     # Validate execution parameters
     if args.num_executions > 1:
@@ -1046,6 +1096,10 @@ Examples:
                         help="Number of executions (default: 1)")
 
     # Annotation parameters
+    parser.add_argument('--annotator', default='sam3', choices=['sam3', 'grounded_sam2'],
+                        help="Annotator backend: 'sam3' (default) or 'grounded_sam2'")
+    parser.add_argument('--sam3_ckpt', default=None,
+                        help="SAM3 checkpoint file (resolved from cache_dir if not provided)")
     parser.add_argument('--sam2_ckpt', default=None, help="SAM2 checkpoint file (resolved from cache_dir if not provided)")
     parser.add_argument('--sam2_config', default="./configs/sam2.1/sam2.1_hiera_l.yaml", help="SAM2 config file (resolved from cache_dir if not provided)")
     parser.add_argument('--gdino_config', default="./Grounded-SAM-2/grounding_dino/groundingdino/config/GroundingDINO_SwinT_OGC.py", help="Grounding DINO config file (resolved from cache_dir if not provided)")
@@ -1057,9 +1111,11 @@ Examples:
     parser.add_argument('--split', default="train",
                         help="Dataset split name (default: train)")
     parser.add_argument('--box_threshold', type=float, default=0.20,
-                        help="Box detection threshold (default: 0.20)")
+                        help="Grounded-SAM2 box detection threshold (default: 0.20)")
     parser.add_argument('--text_threshold', type=float, default=0.20,
-                        help="Text detection threshold (default: 0.20)")
+                        help="Grounded-SAM2 text detection threshold (default: 0.20)")
+    parser.add_argument('--sam3_confidence', type=float, default=0.45,
+                        help="SAM3 minimum confidence score to keep a detection (default: 0.45)")
 
     args = parser.parse_args()
 
@@ -1406,7 +1462,10 @@ Examples:
             gdino_config=args.gdino_config,
             gdino_ckpt=args.gdino_ckpt,
             box_threshold=args.box_threshold,
-            text_threshold=args.text_threshold
+            text_threshold=args.text_threshold,
+            annotator=args.annotator,
+            sam3_ckpt=args.sam3_ckpt,
+            sam3_confidence=args.sam3_confidence,
         )
 
     print(f"\n=== Pipeline Complete ===")
