@@ -217,13 +217,15 @@ git clone https://github.com/facebookresearch/sam3
 cd sam3 && pip install -e . && cd ..
 
 # Clone Grounded Sam 2 repository
-git clone https://github.com/alejodosr/Grounded-SAM-2  # This one HAS to be inside OpenFabrik folder
+cd OpenFabrik # This one HAS to be inside OpenFabrik's folder
+git clone https://github.com/alejodosr/Grounded-SAM-2  
 cd Grounded-SAM-2
 pip install -e .
 pip install --no-build-isolation -e grounding_dino
 cd ..
 
-# Clone PerSam repository
+# Clone PerSam repository<
+cd OpenFabrik
 git clone https://github.com/alejodosr/Personalize-SAM
 cd Personalize-SAM
 pip install -e .
