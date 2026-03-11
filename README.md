@@ -224,7 +224,7 @@ pip install -e .
 pip install --no-build-isolation -e grounding_dino
 cd ..
 
-# Clone PerSam repository<
+# Clone PerSam repository
 cd OpenFabrik
 git clone https://github.com/alejodosr/Personalize-SAM
 cd Personalize-SAM
